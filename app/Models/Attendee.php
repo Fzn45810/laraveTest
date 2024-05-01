@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Meeting extends Model
+class Attendee extends Model
 {
     use HasFactory;
 
@@ -15,16 +15,10 @@ class Meeting extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'meeting_subject',
-        'meeting_date',
-        'meeting_time',
+        'attendee_email'
     ];
 
-    public function user(){
-        return $this->belongsTo(User::class);
-    }
-
-    public function attendee(){
-        return $this->hasMany(Attendee::class);
+    public function meeting(){
+        return $this->belongsTo(Meeting::class);
     }
 }

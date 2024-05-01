@@ -45,7 +45,6 @@ class User extends Authenticatable
         ];
     }
 
-
     public function meeting(){
         return $this->hasMany(Meeting::class);
     }
