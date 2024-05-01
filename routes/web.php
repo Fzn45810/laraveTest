@@ -14,6 +14,8 @@ Route::post('/savemeeting', [App\Http\Controllers\HomeController::class, 'save_m
 
 Route::get('/edit/{id}', [App\Http\Controllers\HomeController::class, 'edit_meeting'])->name('edit');
 
+Route::post('/updatemeeting', [App\Http\Controllers\HomeController::class, 'update_meeting'])->name('updatemeeting');
+
 Route::get('/delete/{id}', [App\Http\Controllers\HomeController::class, 'delete_meeting'])->name('delete');
 
 

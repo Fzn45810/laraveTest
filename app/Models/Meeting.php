@@ -18,13 +18,11 @@ class Meeting extends Model
         'meeting_subject',
         'meeting_date',
         'meeting_time',
+        'attendee_one',
+        'attendee_two',
     ];
 
     public function user(){
         return $this->belongsTo(User::class);
-    }
-
-    public function attendee(){
-        return $this->hasMany(Attendee::class);
     }
 }

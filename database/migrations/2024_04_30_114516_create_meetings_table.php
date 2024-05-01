@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('meeting_subject');
             $table->date('meeting_date');
             $table->time("meeting_time");
+            $table->string('attendee_one')->nullable();
+            $table->string('attendee_two')->nullable();
 
 
             $table->timestamps();
