@@ -15,7 +15,8 @@ class Attendee extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'attendee_email'
+        'attendee_one',
+        'attendee_two'
     ];
 
     public function meeting(){

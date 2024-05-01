@@ -14,9 +14,13 @@ return new class extends Migration
         Schema::create('attendees', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignIdFor(\App\Models\Meeting::class)->constrained();
+            $table->foreignIdFor(\App\Models\Meeting::class)
+            ->constrained()
+            ->onUpdate('cascade')
+            ->onDelete('cascade');
 
-            $table->email('attendee_email');
+            $table->string('attendee_one')->nullable();
+            $table->string('attendee_two')->nullable();
 
             $table->timestamps();
         });

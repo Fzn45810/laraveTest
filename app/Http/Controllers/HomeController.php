@@ -3,6 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Redirect;
+use App\Models\Meeting;
+use App\Models\Attendee;
+use Auth;
 
 class HomeController extends Controller
 {
@@ -23,6 +28,54 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $get_meeting = Meeting::paginate(1);
+        return view('home', compact('get_meeting'));
+    }
+
+    /**
+     * Save Meeting with attendee
+     *
+     */
+    public function save_meeting(Request $request)
+    {
+        // dd(Auth::id());
+         $validator = Validator::make($request->all(), [
+            'meeting_subject' => 'required', 'string', 'max:255',
+            'meeting_date' => 'required', 'string', 'max:255',
+            'meeting_time' => 'required', 'string', 'max:255',
+            'attendee_one' => 'required', 'string', 'email', 'max:255',
+            'attendee_two' => 'string', 'email', 'max:255'
+        ]);
+
+        if ($validator->fails()) {
+             return back()->withErrors($validator->errors());
+        }
+
+        $meeting = new Meeting();
+        $meeting->meeting_subject = $request->meeting_subject;
+        $meeting->meeting_date = $request->meeting_date;
+        $meeting->meeting_time = $request->meeting_time;
+
+        $meeting->user()->associate(Auth::id());
+        $meeting->save();
+
+        $attendee = new Attendee();
+        $attendee->attendee_one = $request->attendee_one;
+        $attendee->attendee_two = $request->attendee_two;
+
+        $attendee->meeting()->associate($meeting);
+        $attendee->save();
+
+        return Redirect::route('home');
+    }
+
+    public function edit_meeting($id){
+        $get_meeting = Meeting::with('attendee')->where('id', $id)->first();
+        return view('updatemeeting', compact('get_meeting'));
+    }
+
+    public function delete_meeting($id){
+        Meeting::where('id', $id)->delete();
+        return back()->with(['status' => 'Successfully deleted!']);
     }
 }

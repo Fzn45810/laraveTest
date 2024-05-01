@@ -12,9 +12,36 @@
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+
+    <style>
+       table {
+           width: 100%;
+           border-collapse: collapse;
+           margin-bottom: 20px;
+       }
+
+       th, td {
+           border: 1px solid #dddddd;
+           text-align: left;
+           padding: 8px;
+       }
+
+       th {
+           background-color: #f2f2f2;
+       }
+
+       tr:nth-child(even) {
+           background-color: #f2f2f2;
+       }
+
+       tr:hover {
+           background-color: #ddd;
+       }
+    </style>
 </head>
 <body>
     <div id="app">
