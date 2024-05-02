@@ -19,4 +19,5 @@ credentials_json and token_json path is set in storage->app->public
 ## How to run the Project
 
 php artisan serve
+
 npm run dev
