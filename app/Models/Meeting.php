@@ -15,6 +15,7 @@ class Meeting extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'event_id',
         'meeting_subject',
         'meeting_date',
         'meeting_time',
