@@ -8,10 +8,12 @@
                 <div class="card-header">Create Meeting</div>
 
                 <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
+                    @if($errors->any())
+                        @foreach ($errors->all() as $error)
+                            <div class="alert alert-danger" role="alert">
+                                {{ $error }}
+                            </div>
+                        @endforeach
                     @endif
 
                     <form method="POST" action="{{ route('savemeeting')}}">
@@ -89,7 +91,9 @@
                             @endforeach
                         </tbody>
                     </table>
-                    {{ $get_meeting->links() }}
+                    <div class="d-flex justify-content-center">
+                        {!! $get_meeting->links() !!}
+                    </div>
                 </div>
             </div>
         </div>

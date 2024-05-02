@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redirect;
 use App\Models\Meeting;
 use Auth;
+use Spatie\GoogleCalendar\Event;
+use Google\Client;
 
 class HomeController extends Controller
 {
@@ -37,7 +39,7 @@ class HomeController extends Controller
      */
     public function save_meeting(Request $request)
     {
-        // dd(Auth::id());
+        dd(\Carbon\Carbon::now()->toDateTimeString(), $request->meeting_date . " " . $request->meeting_time);
         $validator = Validator::make($request->all(), [
             'meeting_subject' => 'required', 'string', 'max:255',
             'meeting_date' => 'required', 'string', 'max:255',
@@ -59,6 +61,18 @@ class HomeController extends Controller
 
         $meeting->user()->associate(Auth::id());
         $meeting->save();
+
+        $event = new Event();
+
+        $event->name = $request->meeting_subject;
+        $event->startDateTime = $request->meeting_date . " " . $request->meeting_time;
+        $event->addAttendee(['email' => $request->attendee_one]);
+        $event->addAttendee(['email' => $request->attendee_two]);
+        $event->addMeetLink();
+
+        $event->id;
+
+        $event->save();
 
         return Redirect::route('home');
     }
@@ -96,5 +110,21 @@ class HomeController extends Controller
     public function delete_meeting($id){
         Meeting::where('id', $id)->delete();
         return back()->with(['status' => 'Successfully deleted!']);
+    }
+
+
+    public function test_call(){
+
+        $event = new Event();
+
+        $event->name = 'A new event';
+        $event->startDateTime = \Carbon\Carbon::now();
+        $event->addAttendee([
+            'email' => 'john@example.com'
+        ]);
+        $event->addAttendee(['email' => 'anotherEmail@gmail.com']);
+        $event->addMeetLink(); 
+
+        $event->save();
     }
 }
