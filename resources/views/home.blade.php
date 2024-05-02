@@ -8,6 +8,12 @@
                 <div class="card-header">Create Meeting</div>
 
                 <div class="card-body">
+                    @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>
+                    @endif
+
                     @if($errors->any())
                         @foreach ($errors->all() as $error)
                             <div class="alert alert-danger" role="alert">

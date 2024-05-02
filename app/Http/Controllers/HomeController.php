@@ -39,7 +39,6 @@ class HomeController extends Controller
      */
     public function save_meeting(Request $request)
     {
-        dd(\Carbon\Carbon::now()->toDateTimeString(), $request->meeting_date . " " . $request->meeting_time);
         $validator = Validator::make($request->all(), [
             'meeting_subject' => 'required', 'string', 'max:255',
             'meeting_date' => 'required', 'string', 'max:255',
@@ -52,16 +51,6 @@ class HomeController extends Controller
              return back()->withErrors($validator->errors());
         }
 
-        $meeting = new Meeting();
-        $meeting->meeting_subject = $request->meeting_subject;
-        $meeting->meeting_date = $request->meeting_date;
-        $meeting->meeting_time = $request->meeting_time;
-        $meeting->attendee_one = $request->attendee_one;
-        $meeting->attendee_two = $request->attendee_two;
-
-        $meeting->user()->associate(Auth::id());
-        $meeting->save();
-
         $event = new Event();
 
         $event->name = $request->meeting_subject;
@@ -70,9 +59,18 @@ class HomeController extends Controller
         $event->addAttendee(['email' => $request->attendee_two]);
         $event->addMeetLink();
 
-        $event->id;
-
         $event->save();
+
+        $meeting = new Meeting();
+        $meeting->event_id = $event->id;
+        $meeting->meeting_subject = $request->meeting_subject;
+        $meeting->meeting_date = $request->meeting_date;
+        $meeting->meeting_time = $request->meeting_time;
+        $meeting->attendee_one = $request->attendee_one;
+        $meeting->attendee_two = $request->attendee_two;
+
+        $meeting->user()->associate(Auth::id());
+        $meeting->save();
 
         return Redirect::route('home');
     }
@@ -95,36 +93,49 @@ class HomeController extends Controller
             return back()->withErrors($validator->errors());
         }
 
-        Meeting::where('id', $request->meetingid)
-        ->update([
-            'meeting_subject' => $request->meeting_date,
+
+        $get_meeting = Meeting::where('id', $request->meetingid)->first();
+
+        $get_calenderevent = Event::find($get_meeting->event_id);
+
+        $get_calenderevent->delete();
+
+        $event = new Event();
+
+        $event->name = $request->meeting_subject;
+        $event->startDateTime = $request->meeting_date . " " . $request->meeting_time;
+        $event->addAttendee(['email' => $request->attendee_one]);
+        $event->addAttendee(['email' => $request->attendee_two]);
+        $event->addMeetLink();
+
+        $event->save();
+
+        $get_meeting->update([
+            'event_id' => $event->id,
+            'meeting_subject' => $request->meeting_subject,
             'meeting_date' => $request->meeting_date,
             'meeting_time' => $request->meeting_time,
             'attendee_one' => $request->attendee_one,
             'attendee_two' => $request->attendee_two
         ]);
 
+        $get_calenderevent->update([
+            'name' => $request->meeting_subject,
+            'startDateTime' => $request->meeting_date . " " . $request->meeting_time,
+            'email' => $request->meeting_subject,
+            'name' => $request->meeting_subject,
+        ]);
+
         return back()->with(['status' => 'Successfully updated!']);
     }
 
     public function delete_meeting($id){
-        Meeting::where('id', $id)->delete();
+        $get_meeting = Meeting::where('id', $request->meetingid)->first();
+        $get_calenderevent = Event::find($get_meeting->event_id);
+
+        $get_calenderevent->delete();
+        $get_meeting->delete();
+
         return back()->with(['status' => 'Successfully deleted!']);
-    }
-
-
-    public function test_call(){
-
-        $event = new Event();
-
-        $event->name = 'A new event';
-        $event->startDateTime = \Carbon\Carbon::now();
-        $event->addAttendee([
-            'email' => 'john@example.com'
-        ]);
-        $event->addAttendee(['email' => 'anotherEmail@gmail.com']);
-        $event->addMeetLink(); 
-
-        $event->save();
     }
 }
